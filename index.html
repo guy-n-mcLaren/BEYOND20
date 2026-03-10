@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEYOND20 | Join the Network</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --dark-blue: #1e293b;
+            --slate-gray: #64748b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--dark-blue);
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            max-height: 60px;
+            margin-bottom: 15px;
+        }
+
+        h2 { margin: 0; color: var(--dark-blue); }
+        p { color: var(--slate-gray); font-size: 14px; margin-top: 8px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-blue);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        textarea { height: 100px; resize: vertical; }
+
+        button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: #059669; }
+
+        #successMsg {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card" id="formCard">
+        <div class="header">
+            <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" alt="B20 Logo" class="logo">
+            <h2>Join the BEYOND20 Network</h2>
+            <p>Complete your profile to be considered for upcoming consulting assignments.</p>
+        </div>
+
+        <form id="applyForm">
+            <div class="form-grid">
+                <div>
+                    <label>First Name*</label>
+                    <input type="text" id="first_name" required>
+                </div>
+                <div>
+                    <label>Surname*</label>
+                    <input type="text" id="surname" required>
+                </div>
+                
+                <div class="full-width">
+                    <label>Email Address*</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div>
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone_number" placeholder="+1 555-0000">
+                </div>
+                <div>
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="City, Country">
+                </div>
+
+                <div class="full-width">
+                    <label>LinkedIn Profile URL</label>
+                    <input type="url" id="linkedin_url" placeholder="https://linkedin.com/in/...">
+                </div>
+
+                <div class="full-width">
+                    <label>Primary Specialty</label>
+                    <input type="text" id="specialty_1" placeholder="e.g. Supply Chain Optimization">
+                </div>
+
+                <div class="full-width">
+                    <label>Sector Experience</label>
+                    <input type="text" id="sector_experience" placeholder="e.g. Retail, FMCG, Pharma">
+                </div>
+
+                <div class="full-width">
+                    <label>Previous Employers</label>
+                    <textarea id="previous_employers" placeholder="List key firms you have worked for..."></textarea>
+                </div>
+
+                <div class="full-width">
+                    <label>Key Previous Assignments</label>
+                    <textarea id="previous_assignments" placeholder="Describe 2-3 significant projects..."></textarea>
+                </div>
+
+                <div class="full-width">
+                    <label>Current Availability</label>
+                    <input type="text" id="availability_status" placeholder="e.g. Available July 1st">
+                </div>
+
+                <button type="submit" class="full-width">Submit Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" id="successMsg">
+        <h1 style="color: var(--primary-green);">✔️</h1>
+        <h2>Application Received!</h2>
+        <p>Thank you for joining the BEYOND20 Network. We will review your profile and be in touch for relevant projects.</p>
+        <button onclick="location.reload()" style="background: #e2e8f0; color: #1e293b; margin-top: 20px;">Submit Another</button>
+    </div>
+</div>
+
+<script>
+    const SB_URL = 'https://zghuzprolilfrrwnerzj.supabase.co';
+    const SB_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
+    const _supabase = supabase.createClient(SB_URL, SB_KEY);
+
+    const form = document.getElementById('applyForm');
+    const formCard = document.getElementById('formCard');
+    const successMsg = document.getElementById('successMsg');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Collect all data (estimated_day_rate line removed)
+        const formData = {
+            first_name: document.getElementById('first_name').value,
+            surname: document.getElementById('surname').value,
+            email: document.getElementById('email').value,
+            phone_number: document.getElementById('phone_number').value,
+            location: document.getElementById('location').value,
+            linkedin_url: document.getElementById('linkedin_url').value,
+            specialty_1: document.getElementById('specialty_1').value,
+            sector_experience: document.getElementById('sector_experience').value,
+            previous_employers: document.getElementById('previous_employers').value,
+            previous_assignments: document.getElementById('previous_assignments').value,
+            availability_status: document.getElementById('availability_status').value
+        };
+
+        console.log("Attempting to save:", formData);
+
+        const { data, error } = await _supabase
+            .from('consulting_partners')
+            .insert([formData]);
+
+        if (error) {
+            console.error("Supabase Error:", error);
+            alert("Error: " + error.message);
+        } else {
+            formCard.style.display = 'none';
+            successMsg.style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+
+</html>
+
