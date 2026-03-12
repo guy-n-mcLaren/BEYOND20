@@ -113,8 +113,8 @@
                         <a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none; display: block; font-size: 13px;">
                            ✉️ ${p.email || '-'}
                         </a>
-                        <a href="tel:${p.mobile_phone}" style="color: #64748b; text-decoration: none; display: block; font-size: 13px;">
-                           📞 ${p.mobile_phone || '-'}
+                        <a href="tel:${p.phone_number}" style="color: #64748b; text-decoration: none; display: block; font-size: 13px;">
+                           📞 ${p.phone_number || '-'}
                         </a>
                     </div>
                 </td>
@@ -198,7 +198,7 @@ function exportToCSV() {
         `"${p.first_name || ''}"`,
         `"${p.surname || ''}"`,
         `"${p.email || ''}"`,
-        `"${p.mobile_phone || ''}"`,
+        `"${p.phone_number || ''}"`,
         `"${p.location || ''}"`,
         `"${p.linkedin_url || ''}"`,
         `"${p.specialty_1 || ''}"`,
@@ -245,6 +245,7 @@ window.addEventListener('DOMContentLoaded', checkAccess);
 </body>
 
 </html>
+
 
 
 
