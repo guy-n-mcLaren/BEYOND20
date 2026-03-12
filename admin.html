@@ -49,23 +49,30 @@
         </div>
     </div>
 
-    <div class="card">
-        <input type="text" id="searchBar" placeholder="🔍 Search by name, specialty, or sector..." onkeyup="filterTable()">
+ <div class="card">
+    <input type="text" id="searchBar" placeholder="🔍 Search by name, specialty, employer, or location..." onkeyup="filterTable()">
+    
+    <div style="overflow-x: auto;">
         <table id="partnerTable">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th> <th>Mobile</th> <th>Specialty</th>
-            <th>Sector Experience</th>
-            <th>Location</th>
-            <th>Day Rate</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="partnerTableBody">
-    </tbody>
-</table>
-               </div>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact Info</th>
+                    <th>Location</th>
+                    <th>LinkedIn</th>
+                    <th>Specialty</th>
+                    <th>Sectors</th>
+                    <th>Previous Employers</th>
+                    <th>Key Assignments</th>
+                    <th>Availability</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="partnerTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <script>
     // 1. UPDATE WITH YOUR CREDENTIALS
@@ -101,12 +108,21 @@
         const row = `
             <tr>
                 <td><strong>${p.first_name} ${p.surname}</strong></td>
-                <td><a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none;">${p.email || '-'}</a></td> 
-                <td><a href="tel:${p.mobile_phone}" style="color: #3b82f6; text-decoration: none;">${p.mobile_phone || '-'}</a></td>
+                <td>
+                    <div style="font-size: 12px;">
+                        <a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none;">${p.email || '-'}</a><br>
+                        <a href="tel:${p.mobile_phone}" style="color: #64748b; text-decoration: none;">${p.mobile_phone || '-'}</a>
+                    </div>
+                </td>
+                <td>${p.location || '-'}</td>
+                <td>
+                    ${p.linkedin_url ? `<a href="${p.linkedin_url}" target="_blank" style="color: #0077b5; text-decoration: none;">View</a>` : '-'}
+                </td>
                 <td>${p.specialty_1 || '-'}</td>
                 <td>${p.sector_experience || '-'}</td>
-                <td>${p.location || '-'}</td>
-                <td>$${p.estimated_day_rate || '0'}</td>
+                <td style="max-width: 150px; font-size: 11px;">${p.previous_employers || '-'}</td>
+                <td style="max-width: 150px; font-size: 11px;">${p.previous_assignments || '-'}</td>
+                <td><span style="background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${p.availability_status || '-'}</span></td>
                 <td>
                     <button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button>
                 </td>
@@ -134,14 +150,15 @@
 
     // 5. SEARCH/FILTER LOGIC
     function filterTable() {
-        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-        const filtered = allPartners.filter(p => 
-            `${p.first_name} ${p.surname}`.toLowerCase().includes(searchTerm) ||
-            (p.specialty_1 && p.specialty_1.toLowerCase().includes(searchTerm)) ||
-            (p.sector_experience && p.sector_experience.toLowerCase().includes(searchTerm))
-        );
-        displayPartners(filtered);
-    }
+    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+    const filtered = allPartners.filter(p => 
+        `${p.first_name} ${p.surname}`.toLowerCase().includes(searchTerm) ||
+        (p.specialty_1 && p.specialty_1.toLowerCase().includes(searchTerm)) ||
+        (p.location && p.location.toLowerCase().includes(searchTerm)) ||
+        (p.previous_employers && p.previous_employers.toLowerCase().includes(searchTerm))
+    );
+    displayPartners(filtered);
+}
 
     // 6. UPDATE COUNTERS
     function updateStats(partners) {
@@ -190,3 +207,4 @@ window.addEventListener('DOMContentLoaded', checkAccess);
 </body>
 
 </html>
+
