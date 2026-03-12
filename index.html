@@ -155,14 +155,16 @@
                 </div>
 
                 <div class="full-width">
-                    <label>Previous Employers</label>
-                    <textarea id="previous_employers" placeholder="List key firms you have worked for..."></textarea>
-                </div>
+    <label>Previous Employers</label>
+    <textarea id="previous_employers" maxlength="500" placeholder="List key firms you have worked for..."></textarea>
+    <div id="employerCount" style="font-size: 11px; color: #64748b; text-align: right; margin-top: 4px;">500 characters remaining</div>
+</div>
 
-                <div class="full-width">
-                    <label>Key Previous Assignments</label>
-                    <textarea id="previous_assignments" placeholder="Describe 2-3 significant projects..."></textarea>
-                </div>
+<div class="full-width">
+    <label>Key Previous Assignments</label>
+    <textarea id="previous_assignments" maxlength="1000" placeholder="Describe 2-3 significant projects..."></textarea>
+    <div id="assignmentCount" style="font-size: 11px; color: #64748b; text-align: right; margin-top: 4px;">1000 characters remaining</div>
+</div>
 
                 <div class="full-width">
                     <label>Current Availability</label>
@@ -186,6 +188,26 @@
     const SB_URL = 'https://zghuzprolilfrrwnerzj.supabase.co';
     const SB_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
+    // --- ADD THIS COUNTER LOGIC HERE ---
+    function attachCounter(fieldId, displayId, maxLimit) {
+        const field = document.getElementById(fieldId);
+        const display = document.getElementById(displayId);
+
+        if (field && display) {
+            field.addEventListener('input', () => {
+                const remaining = maxLimit - field.value.length;
+                display.innerText = `${remaining} characters remaining`;
+                
+                // Visual feedback: turns red when close to limit
+                display.style.color = remaining < 50 ? '#ef4444' : '#64748b';
+            });
+        }
+    }
+
+    // Activate the counters for your textareas
+    attachCounter('previous_employers', 'employerCount', 500);
+    attachCounter('previous_assignments', 'assignmentCount', 1000);
+    // -----------------------------------
 
     const form = document.getElementById('applyForm');
     const formCard = document.getElementById('formCard');
@@ -230,6 +252,7 @@ const formData = {
 </body>
 
 </html>
+
 
 
 
