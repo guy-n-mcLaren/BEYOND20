@@ -171,19 +171,49 @@
     }
 
     // 7. EXPORT TO EXCEL (CSV)
-    function exportToCSV() {
-        if (allPartners.length === 0) return;
-        const headers = Object.keys(allPartners[0]).join(",");
-        const rows = allPartners.map(p => Object.values(p).join(","));
-        const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows.join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "B20_Consultant_Bench.csv");
-        document.body.appendChild(link);
-        link.click();
+function exportToCSV() {
+    if (allPartners.length === 0) {
+        alert("No data available to export.");
+        return;
     }
 
+    // Define the headers for your CSV
+    const headers = [
+        "First Name", "Surname", "Email", "Mobile Phone", 
+        "Location", "LinkedIn URL", "Specialty", 
+        "Sector Experience", "Previous Employers", 
+        "Key Assignments", "Availability"
+    ];
+
+    // Map the data to match the headers exactly
+    const rows = allPartners.map(p => [
+        `"${p.first_name || ''}"`,
+        `"${p.surname || ''}"`,
+        `"${p.email || ''}"`,
+        `"${p.mobile_phone || ''}"`,
+        `"${p.location || ''}"`,
+        `"${p.linkedin_url || ''}"`,
+        `"${p.specialty_1 || ''}"`,
+        `"${p.sector_experience || ''}"`,
+        `"${p.previous_employers || ''}"`,
+        `"${p.previous_assignments || ''}"`,
+        `"${p.availability_status || ''}"`
+    ].join(","));
+
+    // Combine headers and rows
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + headers.join(",") + "\n" 
+        + rows.join("\n");
+
+    // Create a download link and click it
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `B20_Consultant_Report_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // Clean up
+}
     // INITIAL LOAD
  // THE GATEKEEPER
 function checkAccess() {
@@ -207,4 +237,5 @@ window.addEventListener('DOMContentLoaded', checkAccess);
 </body>
 
 </html>
+
 
