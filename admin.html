@@ -52,21 +52,20 @@
     <div class="card">
         <input type="text" id="searchBar" placeholder="🔍 Search by name, specialty, or sector..." onkeyup="filterTable()">
         <table id="partnerTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Specialty</th>
-                    <th>Sector Experience</th>
-                    <th>Location</th>
-                    <th>Day Rate</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="partnerTableBody">
-                </tbody>
-        </table>
-    </div>
-</div>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th> <th>Mobile</th> <th>Specialty</th>
+            <th>Sector Experience</th>
+            <th>Location</th>
+            <th>Day Rate</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="partnerTableBody">
+    </tbody>
+</table>
+               </div>
 
 <script>
     // 1. UPDATE WITH YOUR CREDENTIALS
@@ -94,26 +93,28 @@
     }
 
     // 3. DISPLAY DATA IN TABLE
-    function displayPartners(partners) {
-        const tableBody = document.getElementById('partnerTableBody');
-        tableBody.innerHTML = '';
+ function displayPartners(partners) {
+    const tableBody = document.getElementById('partnerTableBody');
+    tableBody.innerHTML = '';
 
-        partners.forEach(p => {
-            const row = `
-                <tr>
-                    <td><strong>${p.first_name} ${p.surname}</strong></td>
-                    <td>${p.specialty_1 || '-'}</td>
-                    <td>${p.sector_experience || '-'}</td>
-                    <td>${p.location || '-'}</td>
-                    <td>$${p.estimated_day_rate || '0'}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button>
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    }
+    partners.forEach(p => {
+        const row = `
+            <tr>
+                <td><strong>${p.first_name} ${p.surname}</strong></td>
+                <td><a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none;">${p.email || '-'}</a></td> 
+                <td><a href="tel:${p.mobile_phone}" style="color: #3b82f6; text-decoration: none;">${p.mobile_phone || '-'}</a></td>
+                <td>${p.specialty_1 || '-'}</td>
+                <td>${p.sector_experience || '-'}</td>
+                <td>${p.location || '-'}</td>
+                <td>$${p.estimated_day_rate || '0'}</td>
+                <td>
+                    <button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}
 
     // 4. DELETE FUNCTION
     async function deletePartner(id) {
@@ -187,4 +188,5 @@ window.addEventListener('DOMContentLoaded', checkAccess);
 </script>
 
 </body>
+
 </html>
