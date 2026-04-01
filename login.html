@@ -36,10 +36,18 @@
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
 
-    // SMART REDIRECT: Check where the user came from
-    // If they came from admin.html, the URL might look like login.html?from=admin
+    // --- IMPROVED REDIRECT LOGIC ---
     const urlParams = new URLSearchParams(window.location.search);
-    const destination = urlParams.get('from') || 'index.html'; 
+    let destination = urlParams.get('from');
+
+    // If 'from' isn't in URL, check if the person just came from the admin page
+    if (!destination) {
+        if (document.referrer.includes('admin.html')) {
+            destination = 'admin.html';
+        } else {
+            destination = 'index.html'; // Final fallback
+        }
+    }
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -57,24 +65,9 @@
             btn.innerText = 'Sign In';
             btn.disabled = false;
         } else {
-            // SUCCESS
-            messageDiv.style.color = "green";
-            messageDiv.innerText = "Login successful! Redirecting...";
-            
-            // If they were trying to reach admin.html, it will go there.
-            // Otherwise, it defaults to index.html
             window.location.href = destination;
         }
     });
-
-    // If user is ALREADY logged in, send them away from the login page
-    async function checkExistingSession() {
-        const { data: { session } } = await db.auth.getSession();
-        if (session) {
-            window.location.href = destination;
-        }
-    }
-    checkExistingSession();
 </script>
 </body>
 </html>
