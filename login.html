@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | B20 CRM</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .logo { height: 80px; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #0056b3; }
+        #message { margin-top: 15px; font-size: 0.9rem; color: red; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" class="logo">
+    <h2>CRM Login</h2>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit" id="loginBtn">Sign In</button>
+    </form>
+    <div id="message"></div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://zghuzprolilfrrwnerzj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            messageDiv.innerText = error.message;
+        } else {
+            // Success! Go to dashboard
+            window.location.href = 'index.html';
+        }
+    });
+</script>
+</body>
+</html>
