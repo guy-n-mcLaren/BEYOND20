@@ -12,14 +12,14 @@
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         button:hover { background: #0056b3; }
-        #message { margin-top: 15px; font-size: 0.9rem; color: red; }
+        #message { margin-top: 15px; font-size: 0.9rem; color: #dc3545; }
     </style>
 </head>
 <body>
 
 <div class="login-card">
     <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" class="logo">
-    <h2>CRM Login</h2>
+    <h2>B20 Systems Login</h2>
     <form id="loginForm">
         <input type="email" id="email" placeholder="Email Address" required>
         <input type="password" id="password" placeholder="Password" required>
@@ -36,20 +36,45 @@
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
 
+    // SMART REDIRECT: Check where the user came from
+    // If they came from admin.html, the URL might look like login.html?from=admin
+    const urlParams = new URLSearchParams(window.location.search);
+    const destination = urlParams.get('from') || 'index.html'; 
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+
+        btn.innerText = 'Authenticating...';
+        btn.disabled = true;
 
         const { data, error } = await db.auth.signInWithPassword({ email, password });
 
         if (error) {
             messageDiv.innerText = error.message;
+            btn.innerText = 'Sign In';
+            btn.disabled = false;
         } else {
-            // Success! Go to dashboard
-            window.location.href = 'index.html';
+            // SUCCESS
+            messageDiv.style.color = "green";
+            messageDiv.innerText = "Login successful! Redirecting...";
+            
+            // If they were trying to reach admin.html, it will go there.
+            // Otherwise, it defaults to index.html
+            window.location.href = destination;
         }
     });
+
+    // If user is ALREADY logged in, send them away from the login page
+    async function checkExistingSession() {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+            window.location.href = destination;
+        }
+    }
+    checkExistingSession();
 </script>
 </body>
 </html>
