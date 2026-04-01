@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Client | B20 CRM</title>
+    <title>Manage Client | Beyond20 CRM</title>
+    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32,al_c,q_80/B20%20Logo_edited_edited.jpg">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; padding: 20px; }
@@ -42,7 +43,7 @@
             </div>
             <div class="field">
                 <label>Country</label>
-                <input type="text" id="country">
+                <input type="text" id="country" placeholder="UK, USA, etc.">
             </div>
             <div class="field">
                 <label>Number of Employees</label>
@@ -50,7 +51,7 @@
             </div>
             <div class="field">
                 <label>Estimated Annual Revenue</label>
-                <input type="text" id="estimated_revenue">
+                <input type="text" id="estimated_revenue" placeholder="e.g. $10M">
             </div>
             <div class="field">
                 <label>Status</label>
@@ -140,7 +141,7 @@
                 <option value="10">10% (Cold Outreach)</option>
             </select>
         </div>
-        <button type="submit" id="saveBtn">Save Client Profile</button>
+        <button type="submit" id="saveBtn">Save Client to The BEYOND20 Network CRM</button>
     </form>
 
     <div class="nav-links">
@@ -154,53 +155,67 @@
     const SUPABASE_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const form = document.getElementById('clientForm');
-    const saveBtn = document.getElementById('saveBtn');
-    const pageTitle = document.getElementById('pageTitle');
-
-    // 1. Check if we are UPDATING an existing client
+    // Get Client ID from URL (e.g., add-client.html?id=123)
     const urlParams = new URLSearchParams(window.location.search);
     const clientId = urlParams.get('id');
 
-    if (clientId) {
-        pageTitle.innerText = "Update Client Profile";
-        saveBtn.innerText = "Update Client Record";
-        loadClientData(clientId);
+    // 1. SECURITY & INITIALIZATION
+    async function init() {
+        const { data: { session } } = await db.auth.getSession();
+        if (!session) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // If an ID exists, load the existing data (Edit Mode)
+        if (clientId) {
+            document.getElementById('pageTitle').innerText = "Edit Client Profile";
+            document.getElementById('saveBtn').innerText = "Update Client Details";
+            loadClientData();
+        }
     }
 
-    async function loadClientData(id) {
-        const { data, error } = await db.from('clients').select('*').eq('id', id).single();
-        if (error) return console.error('Error loading client:', error);
+    // 2. LOAD EXISTING DATA
+    async function loadClientData() {
+        const { data, error } = await db.from('clients').select('*').eq('id', clientId).single();
         
+        if (error) {
+            console.error('Error fetching client:', error);
+            return;
+        }
+
         if (data) {
             document.getElementById('company_name').value = data.company_name || '';
             document.getElementById('country').value = data.country || '';
             document.getElementById('number_of_employees').value = data.number_of_employees || '';
             document.getElementById('estimated_revenue').value = data.estimated_revenue || '';
-            document.getElementById('status').value = data.Status || 'Active';
+            document.getElementById('status').value = data.Status || 'Lead';
             document.getElementById('address').value = data.address || '';
             document.getElementById('key_contact_name').value = data.key_contact_name || '';
             document.getElementById('client_email').value = data.client_email || '';
             document.getElementById('mobile_number').value = data.mobile_number || '';
             document.getElementById('linkedin_profile').value = data.linkedin_profile || '';
             document.getElementById('project_revenue').value = data.project_revenue || '';
-            document.getElementById('project_details').value = data.project_details || '';
-            document.getElementById('last_contacted').value = data.last_contacted || '';
-            document.getElementById('next_contact').value = data.next_contact || '';
-            document.getElementById('social_commentary').value = data.social_commentary || '';
-            document.getElementById('probability').value = data.probability || '50';
             document.getElementById('b20_fee').value = data.b20_fee || '';
             document.getElementById('referring_partner').value = data.referring_partner || '';
             document.getElementById('b20_consultant_partner').value = data.b20_consultant_partner || '';
             document.getElementById('referral_fee').value = data.referral_fee || '';
             document.getElementById('b20_members_touched').value = data.b20_members_touched || '';
+            document.getElementById('last_contacted').value = data.last_contacted || '';
+            document.getElementById('next_contact').value = data.next_contact || '';
+            document.getElementById('project_details').value = data.project_details || '';
+            document.getElementById('social_commentary').value = data.social_commentary || '';
+            document.getElementById('probability').value = data.probability || '25';
         }
     }
 
+    // 3. FORM SUBMISSION (Create or Update)
+    const form = document.getElementById('clientForm');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        saveBtn.innerText = 'Processing...';
-        saveBtn.disabled = true;
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = 'Processing...';
+        btn.disabled = true;
 
         const cleanPrice = (id) => {
             const val = document.getElementById(id).value;
@@ -233,22 +248,26 @@
 
         let result;
         if (clientId) {
-            // UPDATE existing record
+            // Update mode
             result = await db.from('clients').update(clientData).eq('id', clientId);
         } else {
-            // INSERT new record
+            // Insert mode
             result = await db.from('clients').insert([clientData]);
         }
 
         if (result.error) {
+            console.error('Error:', result.error);
             alert('Error: ' + result.error.message);
-            saveBtn.disabled = false;
-            saveBtn.innerText = clientId ? "Update Client Record" : "Save Client Profile";
+            btn.disabled = false;
+            btn.innerText = clientId ? 'Update Client Details' : 'Save Client to CRM';
         } else {
-            alert('Success!');
+            alert(clientId ? 'Client Updated Successfully!' : 'Client Added Successfully!');
             window.location.href = 'index.html';
         }
     });
+
+    // Run initialization
+    init();
 </script>
 </body>
 </html>
