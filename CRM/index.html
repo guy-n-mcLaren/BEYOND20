@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Dashboard</title>
+    <title>Client Dashboard | Beyond20</title>
+    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32,al_c,q_80/B20%20Logo_edited_edited.jpg">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; color: #333; }
@@ -24,8 +25,12 @@
         
         .revenue { color: #28a745; font-weight: bold; }
         .next-date { color: #d9534f; font-weight: bold; }
-        .btn-add { background: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
         
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-add { background: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
+        .btn-logout { background: none; border: 1px solid #d9534f; color: #d9534f; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-logout:hover { background: #d9534f; color: white; }
+
         .btn-action { 
             display: block; 
             width: 120px; 
@@ -69,7 +74,10 @@
             <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" alt="Beyond20 Logo" class="logo">
             <h1>Client Directory</h1>
         </div>
-        <a href="add-client.html" class="btn-add">+ Add New Client</a>
+        <div class="nav-actions">
+            <a href="add-client.html" class="btn-add">+ Add New Client</a>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
     </div>
 
     <div class="summary-bar">
@@ -105,10 +113,27 @@
     const SUPABASE_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // 1. SECURITY CHECK (Runs immediately)
+    async function checkUser() {
+        const { data: { session }, error } = await db.auth.getSession();
+        if (error || !session) {
+            window.location.href = 'login.html';
+        } else {
+            fetchClients(); // Only load data if logged in
+        }
+    }
+    checkUser();
+
+    // 2. LOGOUT LOGIC
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        const { error } = await db.auth.signOut();
+        if (error) alert("Error logging out: " + error.message);
+        window.location.href = 'login.html';
+    });
+
     let currentSortColumn = 'next_contact';
     let isAscending = true;
 
-    // Toggle direction if same column is clicked, otherwise default to ASC
     function handleSort(col) {
         if (currentSortColumn === col) {
             isAscending = !isAscending;
@@ -129,27 +154,20 @@
         const { data, error } = await query;
         if (error) return console.error(error);
 
-        // --- ENHANCED SORTING LOGIC ---
         data.sort((a, b) => {
             const statusA = (a.Status || 'Active').trim().toLowerCase();
             const statusB = (b.Status || 'Active').trim().toLowerCase();
 
-            // First Tier: Sort by Status (Active always on top)
             if (statusA === 'active' && statusB !== 'active') return -1;
             if (statusA !== 'active' && statusB === 'active') return 1;
 
-            // Second Tier: Sort by User Selection within status groups
             let valA = a[currentSortColumn];
             let valB = b[currentSortColumn];
 
-            // Parse numbers for revenue
             if (currentSortColumn === 'project_revenue') {
                 valA = parseFloat(valA) || 0;
                 valB = parseFloat(valB) || 0;
-            } 
-            // Parse dates for next contact
-            else if (currentSortColumn === 'next_contact') {
-                // If date is missing, push it to the end of the group
+            } else if (currentSortColumn === 'next_contact') {
                 valA = valA ? new Date(valA).getTime() : (isAscending ? Infinity : -Infinity);
                 valB = valB ? new Date(valB).getTime() : (isAscending ? Infinity : -Infinity);
             }
@@ -212,12 +230,11 @@
 
     async function deleteClient(id, name) {
         if (confirm(`Are you sure you want to delete ${name}?`)) {
-            await db.from('clients').delete().eq('id', id);
-            fetchClients();
+            const { error } = await db.from('clients').delete().eq('id', id);
+            if (error) alert("Delete failed: " + error.message);
+            else fetchClients();
         }
     }
-
-    fetchClients();
 </script>
 </body>
 </html>
