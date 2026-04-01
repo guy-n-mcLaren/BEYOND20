@@ -5,11 +5,9 @@
     <title>B20 | Consultant Bench Admin</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32/B20%20Logo.png">
-
-<link rel="apple-touch-icon" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_180,h_180/B20%20Logo.png">
-
-<meta name="apple-mobile-web-app-title" content="B20 Admin">
-<meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_180,h_180/B20%20Logo.png">
+    <meta name="apple-mobile-web-app-title" content="B20 Admin">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; padding: 20px; color: #1e293b; }
@@ -17,58 +15,47 @@
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
         .stat-number { font-size: 24px; font-weight: bold; color: #10b981; }
-        
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         #searchBar { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 1600px; }
         th { background: #f1f5f9; text-align: left; padding: 12px; font-size: 14px; }
         td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-        
         .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
         .delete-btn:hover { background: #fecaca; }
-        .export-btn { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; float: right; margin-bottom: 10px; }
-   /* Target the 8th column (Key Assignments) */
-th:nth-child(8), 
-td:nth-child(8) {
-    min-width: 450px;      /* This doubles the standard width */
-    white-space: normal;   /* This allows text to wrap to a new line */
-    line-height: 1.5;      /* Improves readability for long text */
-    vertical-align: top;   /* Aligns text to the top of the cell */
-}
-
-/* Optional: Ensure the Name and Contact stay readable */
-td:nth-child(1), td:nth-child(2) {
-    white-space: nowrap;
-}
-
-/* Make sure the table can expand within the scrollable area */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 1600px; /* Forces horizontal scroll to accommodate the wider column */
-}
-        /* Freeze the Name column to the left */
-th:nth-child(1), 
-td:nth-child(1) {
-    position: sticky;
-    left: 0;
-    background: white;
-    z-index: 2;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-}
-th:nth-child(1) { background: #f1f5f9; z-index: 3; }
+        .export-btn { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        
+        /* Width adjustment for Key Assignments */
+        th:nth-child(8), td:nth-child(8) {
+            min-width: 450px;
+            white-space: normal;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+        /* Sticky Name Column */
+        th:nth-child(1), td:nth-child(1) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 2;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+        th:nth-child(1) { background: #f1f5f9; z-index: 3; }
+        td:nth-child(2) { white-space: nowrap; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-    <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" alt="B20 Logo" style="max-height: 40px; width: auto;">
-    <h1 style="margin: 0; font-size: 24px;">Consultant Bench Summary</h1>
-</div>
-        <button class="export-btn" onclick="exportToCSV()">Excel Export (CSV)</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_318,h_316,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/B20%20Logo_edited_edited.jpg" alt="B20 Logo" style="max-height: 40px; width: auto;">
+            <h1 style="margin: 0; font-size: 24px;">Consultant Bench Summary</h1>
+        </div>
+        <div>
+            <button class="export-btn" onclick="exportToCSV()">Excel Export (CSV)</button>
+            <button class="export-btn" style="background:#64748b; margin-left: 10px;" onclick="handleLogout()">Logout</button>
+        </div>
     </div>
 
     <div class="stats-grid">
@@ -86,40 +73,58 @@ th:nth-child(1) { background: #f1f5f9; z-index: 3; }
         </div>
     </div>
 
- <div class="card">
-    <input type="text" id="searchBar" placeholder="🔍 Search by name, specialty, employer, or location..." onkeyup="filterTable()">
-    
-    <div style="overflow-x: auto;">
-        <table id="partnerTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Contact Info</th>
-                    <th>Location</th>
-                    <th>LinkedIn</th>
-                    <th>Specialty</th>
-                    <th>Sectors</th>
-                    <th>Previous Employers</th>
-                    <th>Key Assignments</th>
-                    <th>Availability</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="partnerTableBody">
-            </tbody>
-        </table>
+    <div class="card">
+        <input type="text" id="searchBar" placeholder="🔍 Search by name, specialty, employer, or location..." onkeyup="filterTable()">
+        <div style="overflow-x: auto;">
+            <table id="partnerTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact Info</th>
+                        <th>Location</th>
+                        <th>LinkedIn</th>
+                        <th>Specialty</th>
+                        <th>Sectors</th>
+                        <th>Previous Employers</th>
+                        <th>Key Assignments</th>
+                        <th>Availability</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="partnerTableBody">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-    // 1. UPDATE WITH YOUR CREDENTIALS
     const SB_URL = 'https://zghuzprolilfrrwnerzj.supabase.co';
     const SB_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-    let allPartners = []; // Local storage for searching
+    let allPartners = [];
 
-    // 2. LOAD DATA FROM SUPABASE
+    // --- 1. THE GATEKEEPER (Option 1) ---
+    async function checkAccess() {
+        const { data: { session } } = await _supabase.auth.getSession();
+        
+        if (!session) {
+            // No session? Go to login.
+            window.location.href = 'login.html';
+        } else {
+            // Session exists? Safe to load data.
+            loadPartners();
+        }
+    }
+
+    // --- 2. LOGOUT FUNCTION ---
+    async function handleLogout() {
+        await _supabase.auth.signOut();
+        window.location.href = 'login.html';
+    }
+
+    // --- 3. LOAD DATA ---
     async function loadPartners() {
         const { data, error } = await _supabase
             .from('consulting_partners')
@@ -128,6 +133,7 @@ th:nth-child(1) { background: #f1f5f9; z-index: 3; }
 
         if (error) {
             console.error("Fetch Error:", error);
+            alert("Security Error: Make sure your RLS policies allow 'authenticated' users to SELECT.");
             return;
         }
 
@@ -136,155 +142,75 @@ th:nth-child(1) { background: #f1f5f9; z-index: 3; }
         updateStats(data);
     }
 
-    // 3. DISPLAY DATA IN TABLE
- function displayPartners(partners) {
-    const tableBody = document.getElementById('partnerTableBody');
-    tableBody.innerHTML = '';
-
-    partners.forEach(p => {
-        const row = `
-            <tr>
-                <td><strong>${p.first_name} ${p.surname}</strong></td>
-                <td>
-                    <div style="line-height: 1.6;">
-                        <a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none; display: block; font-size: 13px;">
-                           ✉️ ${p.email || '-'}
-                        </a>
-                        <a href="tel:${p.phone_number}" style="color: #64748b; text-decoration: none; display: block; font-size: 13px;">
-                           📞 ${p.phone_number || '-'}
-                        </a>
-                    </div>
-                </td>
-                <td>${p.location || '-'}</td>
-                <td>
-                    ${p.linkedin_url ? `<a href="${p.linkedin_url}" target="_blank" style="color: #0077b5; text-decoration: none; font-weight: bold;">View</a>` : '-'}
-                </td>
-                <td>${p.specialty_1 || '-'}</td>
-                <td>${p.sector_experience || '-'}</td>
-                <td>${p.previous_employers || '-'}</td>
-                <td>${p.previous_assignments || '-'}</td>
-                <td>
-                    <span style="background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">
-                        ${p.availability_status || '-'}
-                    </span>
-                </td>
-                <td>
-                    <button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button>
-                </td>
-            </tr>
-        `;
-        tableBody.innerHTML += row;
-    });
-}
-
-    // 4. DELETE FUNCTION
-    async function deletePartner(id) {
-        if (!confirm("Are you sure you want to remove this consultant?")) return;
-
-        const { error } = await _supabase
-            .from('consulting_partners')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            alert("Error: " + error.message);
-        } else {
-            loadPartners(); // Refresh after delete
-        }
+    function displayPartners(partners) {
+        const tableBody = document.getElementById('partnerTableBody');
+        tableBody.innerHTML = '';
+        partners.forEach(p => {
+            const row = `
+                <tr>
+                    <td><strong>${p.first_name} ${p.surname}</strong></td>
+                    <td>
+                        <div style="line-height: 1.6;">
+                            <a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none; display: block; font-size: 13px;">✉️ ${p.email || '-'}</a>
+                            <a href="tel:${p.phone_number}" style="color: #64748b; text-decoration: none; display: block; font-size: 13px;">📞 ${p.phone_number || '-'}</a>
+                        </div>
+                    </td>
+                    <td>${p.location || '-'}</td>
+                    <td>${p.linkedin_url ? `<a href="${p.linkedin_url}" target="_blank" style="color: #0077b5; text-decoration: none; font-weight: bold;">View</a>` : '-'}</td>
+                    <td>${p.specialty_1 || '-'}</td>
+                    <td>${p.sector_experience || '-'}</td>
+                    <td>${p.previous_employers || '-'}</td>
+                    <td>${p.previous_assignments || '-'}</td>
+                    <td>
+                        <span style="background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                            ${p.availability_status || '-'}
+                        </span>
+                    </td>
+                    <td><button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button></td>
+                </tr>`;
+            tableBody.innerHTML += row;
+        });
     }
 
-    // 5. SEARCH/FILTER LOGIC
-    function filterTable() {
-    const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-    const filtered = allPartners.filter(p => 
-        `${p.first_name} ${p.surname}`.toLowerCase().includes(searchTerm) ||
-        (p.specialty_1 && p.specialty_1.toLowerCase().includes(searchTerm)) ||
-        (p.location && p.location.toLowerCase().includes(searchTerm)) ||
-        (p.previous_employers && p.previous_employers.toLowerCase().includes(searchTerm))
-    );
-    displayPartners(filtered);
-}
+    async function deletePartner(id) {
+        if (!confirm("Are you sure?")) return;
+        const { error } = await _supabase.from('consulting_partners').delete().eq('id', id);
+        if (error) alert("Delete failed: " + error.message);
+        else loadPartners();
+    }
 
-    // 6. UPDATE COUNTERS
+    function filterTable() {
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const filtered = allPartners.filter(p => 
+            `${p.first_name} ${p.surname}`.toLowerCase().includes(term) ||
+            (p.specialty_1 && p.specialty_1.toLowerCase().includes(term)) ||
+            (p.location && p.location.toLowerCase().includes(term))
+        );
+        displayPartners(filtered);
+    }
+
     function updateStats(partners) {
         document.getElementById('totalCounter').innerText = partners.length;
-        const available = partners.filter(p => 
-            p.availability_status && p.availability_status.toLowerCase().includes('avail')
-        ).length;
-        document.getElementById('availableCounter').innerText = available;
+        const avail = partners.filter(p => p.availability_status?.toLowerCase().includes('avail')).length;
+        document.getElementById('availableCounter').innerText = avail;
         document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString();
     }
 
-    // 7. EXPORT TO EXCEL (CSV)
-function exportToCSV() {
-    if (allPartners.length === 0) {
-        alert("No data available to export.");
-        return;
+    function exportToCSV() {
+        if (allPartners.length === 0) return;
+        const headers = ["First Name", "Surname", "Email", "Phone", "Location", "Specialty", "Assignments"];
+        const rows = allPartners.map(p => [p.first_name, p.surname, p.email, p.phone_number, p.location, p.specialty_1, `"${p.previous_assignments}"`].join(","));
+        const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.join("\n");
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csvContent));
+        link.setAttribute("download", "B20_Bench_Export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
-    // Define the headers for your CSV
-    const headers = [
-        "First Name", "Surname", "Email", "Mobile Phone", 
-        "Location", "LinkedIn URL", "Specialty", 
-        "Sector Experience", "Previous Employers", 
-        "Key Assignments", "Availability"
-    ];
-
-    // Map the data to match the headers exactly
-    const rows = allPartners.map(p => [
-        `"${p.first_name || ''}"`,
-        `"${p.surname || ''}"`,
-        `"${p.email || ''}"`,
-        `"${p.phone_number || ''}"`,
-        `"${p.location || ''}"`,
-        `"${p.linkedin_url || ''}"`,
-        `"${p.specialty_1 || ''}"`,
-        `"${p.sector_experience || ''}"`,
-        `"${p.previous_employers || ''}"`,
-        `"${p.previous_assignments || ''}"`,
-        `"${p.availability_status || ''}"`
-    ].join(","));
-
-    // Combine headers and rows
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + headers.join(",") + "\n" 
-        + rows.join("\n");
-
-    // Create a download link and click it
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `B20_Consultant_Report_${new Date().toLocaleDateString()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // Clean up
-}
-    // INITIAL LOAD
- // THE GATEKEEPER
-function checkAccess() {
-    const accessCode = prompt("Please enter the B20 Admin Password:");
-    
-    if (accessCode === 'B20-Admin-2026') {
-        // We add a tiny delay (100ms) to make sure the table is ready to receive data
-        setTimeout(() => {
-            loadPartners(); 
-        }, 100);
-    } else {
-        alert("Access Denied.");
-        document.body.innerHTML = '<h1 style="text-align:center; margin-top:100px;">🔒 Unauthorized Access</h1>';
-    }
-}
-
-// This tells the browser: "Wait until the HTML is fully loaded, THEN ask for the password"
-window.addEventListener('DOMContentLoaded', checkAccess);
+    // Start Check
+    window.addEventListener('DOMContentLoaded', checkAccess);
 </script>
-
 </body>
-
 </html>
-
-
-
-
-
-
