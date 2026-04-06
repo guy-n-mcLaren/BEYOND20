@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Dashboard | Beyond20</title>
-    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32,al_c,q_80/B20%20Logo_edited_edited.jpg">
+
+    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32/B20%20Logo.png">
+    
+    <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_180,h_180/B20%20Logo.png">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 20px; background: #f4f7f6; color: #333; }
@@ -117,9 +121,10 @@
     async function checkUser() {
         const { data: { session }, error } = await db.auth.getSession();
         if (error || !session) {
-            window.location.href = 'login.html';
+            // Updated to use the smart redirect tag
+            window.location.href = 'login.html?from=index.html';
         } else {
-            fetchClients(); // Only load data if logged in
+            fetchClients();
         }
     }
     checkUser();
@@ -197,7 +202,7 @@
             body.innerHTML += `
                 <tr class="${isActive ? '' : 'row-inactive'}">
                     <td>
-                        <strong>${client.company_name}</strong><br>
+                        <strong>${client.company_name}</strong>
                         <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span>
                     </td>
                     <td>${client.key_contact_name || '—'}<br><small style="color: #007bff;">${client.client_email || ''}</small></td>
