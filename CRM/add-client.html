@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Client | Beyond20 CRM</title>
-    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32,al_c,q_80/B20%20Logo_edited_edited.jpg">
+    
+    <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32/B20%20Logo.png">
+    
+    <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_180,h_180/B20%20Logo.png">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; padding: 20px; }
@@ -155,7 +159,6 @@
     const SUPABASE_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Get Client ID from URL (e.g., add-client.html?id=123)
     const urlParams = new URLSearchParams(window.location.search);
     const clientId = urlParams.get('id');
 
@@ -163,11 +166,11 @@
     async function init() {
         const { data: { session } } = await db.auth.getSession();
         if (!session) {
-            window.location.href = 'login.html';
+            // Updated redirect with smart from tag
+            window.location.href = `login.html?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
             return;
         }
 
-        // If an ID exists, load the existing data (Edit Mode)
         if (clientId) {
             document.getElementById('pageTitle').innerText = "Edit Client Profile";
             document.getElementById('saveBtn').innerText = "Update Client Details";
@@ -175,7 +178,6 @@
         }
     }
 
-    // 2. LOAD EXISTING DATA
     async function loadClientData() {
         const { data, error } = await db.from('clients').select('*').eq('id', clientId).single();
         
@@ -209,7 +211,6 @@
         }
     }
 
-    // 3. FORM SUBMISSION (Create or Update)
     const form = document.getElementById('clientForm');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -248,10 +249,8 @@
 
         let result;
         if (clientId) {
-            // Update mode
             result = await db.from('clients').update(clientData).eq('id', clientId);
         } else {
-            // Insert mode
             result = await db.from('clients').insert([clientData]);
         }
 
@@ -266,7 +265,6 @@
         }
     });
 
-    // Run initialization
     init();
 </script>
 </body>
