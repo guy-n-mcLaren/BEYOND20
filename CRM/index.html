@@ -95,7 +95,7 @@
         <button class="btn-sort" onclick="handleSort('project_revenue')">Sort: Revenue</button>
     </div>
 
-    <input type="text" id="search" class="search-bar" placeholder="Search Company or Contact..." onkeyup="fetchClients()">
+    <input type="text" id="search" class="search-bar" placeholder="Search Company, Contact, or Position..." onkeyup="fetchClients()">
 
     <table>
         <thead>
@@ -117,11 +117,9 @@
     const SUPABASE_KEY = 'sb_publishable_SckBRAKGy7pw9WkNyY5New_gChTSnuz';
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 1. SECURITY CHECK (Runs immediately)
     async function checkUser() {
         const { data: { session }, error } = await db.auth.getSession();
         if (error || !session) {
-            // Updated to use the smart redirect tag
             window.location.href = 'login.html?from=index.html';
         } else {
             fetchClients();
@@ -129,7 +127,6 @@
     }
     checkUser();
 
-    // 2. LOGOUT LOGIC
     document.getElementById('logoutBtn').addEventListener('click', async () => {
         const { error } = await db.auth.signOut();
         if (error) alert("Error logging out: " + error.message);
@@ -154,7 +151,11 @@
         const body = document.getElementById('tableBody');
         
         let query = db.from('clients').select('*');
-        if (searchTerm) query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%`);
+        
+        // Updated search to include the new 'position' field
+        if (searchTerm) {
+            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%`);
+        }
 
         const { data, error } = await query;
         if (error) return console.error(error);
@@ -205,7 +206,11 @@
                         <strong>${client.company_name}</strong>
                         <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span>
                     </td>
-                    <td>${client.key_contact_name || '—'}<br><small style="color: #007bff;">${client.client_email || ''}</small></td>
+                    <td>
+                        ${client.key_contact_name || '—'}<br>
+                        <small style="color: #666; font-style: italic;">${client.position || ''}</small><br>
+                        <small style="color: #007bff;">${client.client_email || ''}</small>
+                    </td>
                     <td>${client.project_details || '—'}</td>
                     <td><span class="revenue">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
                     <td class="next-date">${client.next_contact || 'Pending'}</td>
