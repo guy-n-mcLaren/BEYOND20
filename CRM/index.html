@@ -68,6 +68,10 @@
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; margin-left: 8px; display: inline-block; }
         .status-active { background: #d4edda; color: #155724; }
         .status-inactive { background: #e2e3e5; color: #383d41; }
+        
+        /* Specific style for LinkedIn Link */
+        .linkedin-link { color: #0077b5; text-decoration: none; font-size: 0.75rem; font-weight: bold; display: inline-block; margin-top: 4px; }
+        .linkedin-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -95,7 +99,7 @@
         <button class="btn-sort" onclick="handleSort('project_revenue')">Sort: Revenue</button>
     </div>
 
-    <input type="text" id="search" class="search-bar" placeholder="Search Company, Contact, or Position..." onkeyup="fetchClients()">
+    <input type="text" id="search" class="search-bar" placeholder="Search Company, Contact, Position, or LinkedIn..." onkeyup="fetchClients()">
 
     <table>
         <thead>
@@ -152,9 +156,9 @@
         
         let query = db.from('clients').select('*');
         
-        // Updated search to include the new 'position' field
         if (searchTerm) {
-            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%`);
+            // Search expanded to include position and linkedin_profile
+            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%,linkedin_profile.ilike.%${searchTerm}%`);
         }
 
         const { data, error } = await query;
@@ -200,6 +204,11 @@
                 activeCount++;
             }
 
+            // LinkedIn logic: Only show if URL exists
+            const linkedinHtml = client.linkedin_profile 
+                ? `<a href="${client.linkedin_profile}" target="_blank" class="linkedin-link">LinkedIn Profile ↗</a>` 
+                : '';
+
             body.innerHTML += `
                 <tr class="${isActive ? '' : 'row-inactive'}">
                     <td>
@@ -209,7 +218,8 @@
                     <td>
                         ${client.key_contact_name || '—'}<br>
                         <small style="color: #666; font-style: italic;">${client.position || ''}</small><br>
-                        <small style="color: #007bff;">${client.client_email || ''}</small>
+                        <small style="color: #007bff;">${client.client_email || ''}</small><br>
+                        ${linkedinHtml}
                     </td>
                     <td>${client.project_details || '—'}</td>
                     <td><span class="revenue">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
