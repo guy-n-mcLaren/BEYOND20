@@ -44,6 +44,10 @@
                 <label>Company Name *</label>
                 <input type="text" id="company_name" placeholder="e.g. Global Foods Ltd" required>
             </div>
+            <div class="field full-width">
+                <label>Company Website (for Logo & Research)</label>
+                <input type="text" id="website_url" placeholder="e.g. beyond20.com">
+            </div>
             <div class="field">
                 <label>Country</label>
                 <input type="text" id="country" placeholder="UK, USA, etc.">
@@ -184,13 +188,14 @@
 
         if (data) {
             document.getElementById('company_name').value = data.company_name || '';
+            document.getElementById('website_url').value = data.website_url || ''; // LOAD WEBSITE
             document.getElementById('country').value = data.country || '';
             document.getElementById('number_of_employees').value = data.number_of_employees || '';
             document.getElementById('estimated_revenue').value = data.estimated_revenue || '';
             document.getElementById('status').value = data.Status || 'Lead';
             document.getElementById('address').value = data.address || '';
             document.getElementById('key_contact_name').value = data.key_contact_name || '';
-            document.getElementById('position').value = data.position || ''; // LOAD POSITION
+            document.getElementById('position').value = data.position || '';
             document.getElementById('client_email').value = data.client_email || '';
             document.getElementById('mobile_number').value = data.mobile_number || '';
             document.getElementById('linkedin_profile').value = data.linkedin_profile || '';
@@ -222,13 +227,14 @@
 
         const clientData = {
             company_name: document.getElementById('company_name').value,
+            website_url: document.getElementById('website_url').value, // SAVE WEBSITE
             country: document.getElementById('country').value,
             number_of_employees: document.getElementById('number_of_employees').value || null,
             estimated_revenue: document.getElementById('estimated_revenue').value,
             Status: document.getElementById('status').value,
             address: document.getElementById('address').value,
             key_contact_name: document.getElementById('key_contact_name').value,
-            position: document.getElementById('position').value, // SAVE POSITION
+            position: document.getElementById('position').value,
             client_email: document.getElementById('client_email').value,
             mobile_number: document.getElementById('mobile_number').value,
             linkedin_profile: document.getElementById('linkedin_profile').value,
