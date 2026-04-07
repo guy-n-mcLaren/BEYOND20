@@ -37,12 +37,12 @@
         .btn-add { background: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
         .btn-logout { background: none; border: 1px solid #d9534f; color: #d9534f; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-        /* WIDENED BUTTONS */
+        /* UNIFORM BUTTON WIDTHS */
         .btn-action { 
             display: block; 
-            width: 140px; /* Increased from 120px */
+            width: 130px; 
             border: none; 
-            padding: 9px 5px; 
+            padding: 9px 0; 
             border-radius: 4px; 
             cursor: pointer; 
             font-size: 0.7rem; 
@@ -50,7 +50,8 @@
             margin-bottom: 6px; 
             text-align: center; 
             text-decoration: none; 
-            white-space: nowrap; /* Prevents text wrapping */
+            white-space: nowrap; 
+            box-sizing: border-box;
         }
         .btn-update { background: #007bff; color: white; }
         .btn-delete { background: #f8f9fa; color: #dc3545; border: 1px solid #dc3545; }
@@ -104,7 +105,8 @@
                 <th class="grid-hide">Project Focus</th>
                 <th>Deal Value</th>
                 <th>Next Follow-up</th>
-                <th style="width: 160px;">Actions</th> </tr>
+                <th style="width: 140px;">Actions</th>
+            </tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
@@ -214,7 +216,7 @@
                     <td><span class="${tempClass}">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
                     <td class="${dateClass}">${client.next_contact || 'TBD'}${alertText}</td>
                     <td>
-                        <a href="add-client.html?id=${client.id}" class="btn-action btn-update">Update Profile</a>
+                        <a href="add-client.html?id=${client.id}" class="btn-action btn-update">Update</a>
                         <button class="btn-action ${isActive ? 'btn-to-inactive' : 'btn-to-active'}" onclick="toggleStatus('${client.id}', '${statusValue}')">
                             ${isActive ? 'Deactivate' : 'Activate'}
                         </button>
