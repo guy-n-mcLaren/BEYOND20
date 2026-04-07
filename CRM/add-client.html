@@ -6,7 +6,6 @@
     <title>Manage Client | Beyond20 CRM</title>
     
     <link rel="icon" type="image/png" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_32,h_32/B20%20Logo.png">
-    
     <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/6ae403_7c8c0b7a789c49b5882443dc4ce55cf9~mv2.jpg/v1/fill/w_180,h_180/B20%20Logo.png">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -76,6 +75,10 @@
             <div class="field">
                 <label>Contact Name</label>
                 <input type="text" id="key_contact_name">
+            </div>
+            <div class="field">
+                <label>Position</label>
+                <input type="text" id="position" placeholder="e.g. CEO or Marketing Manager">
             </div>
             <div class="field">
                 <label>Email Address</label> 
@@ -162,15 +165,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const clientId = urlParams.get('id');
 
-    // 1. SECURITY & INITIALIZATION
     async function init() {
         const { data: { session } } = await db.auth.getSession();
         if (!session) {
-            // Updated redirect with smart from tag
             window.location.href = `login.html?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
             return;
         }
-
         if (clientId) {
             document.getElementById('pageTitle').innerText = "Edit Client Profile";
             document.getElementById('saveBtn').innerText = "Update Client Details";
@@ -180,11 +180,7 @@
 
     async function loadClientData() {
         const { data, error } = await db.from('clients').select('*').eq('id', clientId).single();
-        
-        if (error) {
-            console.error('Error fetching client:', error);
-            return;
-        }
+        if (error) return console.error('Error fetching client:', error);
 
         if (data) {
             document.getElementById('company_name').value = data.company_name || '';
@@ -194,6 +190,7 @@
             document.getElementById('status').value = data.Status || 'Lead';
             document.getElementById('address').value = data.address || '';
             document.getElementById('key_contact_name').value = data.key_contact_name || '';
+            document.getElementById('position').value = data.position || ''; // LOAD POSITION
             document.getElementById('client_email').value = data.client_email || '';
             document.getElementById('mobile_number').value = data.mobile_number || '';
             document.getElementById('linkedin_profile').value = data.linkedin_profile || '';
@@ -231,6 +228,7 @@
             Status: document.getElementById('status').value,
             address: document.getElementById('address').value,
             key_contact_name: document.getElementById('key_contact_name').value,
+            position: document.getElementById('position').value, // SAVE POSITION
             client_email: document.getElementById('client_email').value,
             mobile_number: document.getElementById('mobile_number').value,
             linkedin_profile: document.getElementById('linkedin_profile').value,
@@ -247,20 +245,16 @@
             b20_members_touched: document.getElementById('b20_members_touched').value
         };
 
-        let result;
-        if (clientId) {
-            result = await db.from('clients').update(clientData).eq('id', clientId);
-        } else {
-            result = await db.from('clients').insert([clientData]);
-        }
+        let result = clientId ? 
+            await db.from('clients').update(clientData).eq('id', clientId) : 
+            await db.from('clients').insert([clientData]);
 
         if (result.error) {
-            console.error('Error:', result.error);
             alert('Error: ' + result.error.message);
             btn.disabled = false;
-            btn.innerText = clientId ? 'Update Client Details' : 'Save Client to CRM';
+            btn.innerText = 'Try Again';
         } else {
-            alert(clientId ? 'Client Updated Successfully!' : 'Client Added Successfully!');
+            alert('Success!');
             window.location.href = 'index.html';
         }
     });
