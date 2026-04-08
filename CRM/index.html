@@ -81,20 +81,29 @@
         .btn-to-inactive { background: #6c757d; color: white; }
         .btn-to-active { background: #28a745; color: white; }
 
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; margin-left: 8px; }
+        /* UNIFIED STATUS BADGE STYLE */
+        .status-badge { 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 0.6rem; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            display: inline-block;
+            margin-top: 5px;
+        }
         .status-active { background: #d4edda; color: #155724; }
         .status-inactive { background: #e2e3e5; color: #383d41; }
         
         .linkedin-link { color: #0077b5; text-decoration: none; font-size: 0.75rem; font-weight: bold; display: block; margin-top: 5px; }
         
-        /* UPDATED COMPANY RESEARCH LINK STYLE */
+        /* UPDATED COMPANY LINK STYLE - COLOR MATCHED TO LINKEDIN BLUE */
         .company-research { 
-            font-size: 0.6rem; /* Slightly smaller to fit */
-            color: #6c757d; 
+            font-size: 0.7rem;
+            color: #0077b5; 
             text-decoration: none; 
-            margin-top: 4px; 
-            display: inline-block; 
-            white-space: nowrap; /* Keep on one line */
+            font-weight: bold;
+            display: block;
+            margin-top: 3px;
         }
 
         @media (max-width: 900px) {
@@ -233,9 +242,9 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <img src="${logoUrl}" style="width: 35px; height: 35px; border-radius: 6px; object-fit: contain; background: white; border: 1px solid #eee;" onerror="this.src='https://via.placeholder.com/35?text=B20'">
                             <div>
-                                <strong>${client.company_name}</strong>
-                                <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span><br>
+                                <strong>${client.company_name}</strong><br>
                                 <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}" target="_blank" class="company-research">Company LinkedIn Profile ↗</a>
+                                <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span>
                             </div>
                         </div>
                     </td>
