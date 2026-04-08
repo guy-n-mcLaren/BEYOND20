@@ -21,17 +21,7 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
         .header h1 { font-size: 1.8rem; margin: 0; color: #222; }
         
-        .search-bar { 
-            width: 400px; 
-            max-width: 100%;
-            padding: 12px 15px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            font-size: 14px; 
-            outline: none; 
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); 
-        }
+        .search-bar { width: 400px; max-width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; font-size: 14px; outline: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
         
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         th { background: #007bff; color: white; text-align: left; padding: 12px; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; }
@@ -46,69 +36,23 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
         
         .nav-actions { display: flex; align-items: center; gap: 10px; }
-        .btn-nav { 
-            width: 130px; 
-            height: 42px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 0.85rem; 
-            cursor: pointer; 
-            text-decoration: none;
-            box-sizing: border-box;
-        }
+        .btn-nav { width: 130px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; text-decoration: none; box-sizing: border-box; }
         .btn-add-nav { background: #28a745; color: white; border: none; }
         .btn-logout-nav { background: transparent; border: 1px solid #d9534f; color: #d9534f; }
 
-        .btn-action { 
-            display: block; 
-            width: 130px; 
-            border: none; 
-            padding: 9px 0; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-size: 0.7rem; 
-            font-weight: bold; 
-            margin-bottom: 6px; 
-            text-align: center; 
-            text-decoration: none; 
-            white-space: nowrap; 
-            box-sizing: border-box;
-        }
+        .btn-action { display: block; width: 130px; border: none; padding: 9px 0; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: bold; margin-bottom: 6px; text-align: center; text-decoration: none; white-space: nowrap; box-sizing: border-box; }
         .btn-update { background: #007bff; color: white; }
         .btn-delete { background: #f8f9fa; color: #dc3545; border: 1px solid #dc3545; }
         .btn-to-inactive { background: #6c757d; color: white; }
         .btn-to-active { background: #28a745; color: white; }
 
-        .status-badge { 
-            padding: 3px 6px; 
-            border-radius: 4px; 
-            font-size: 0.6rem; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            display: inline-block;
-            margin-top: 5px;
-        }
+        .status-badge { padding: 3px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; text-transform: uppercase; display: inline-block; margin-top: 5px; }
         .status-active { background: #d4edda; color: #155724; }
         .status-inactive { background: #e2e3e5; color: #383d41; }
         
-        .linkedin-link {
-            text-decoration: none;
-            font-size: 0.7rem;
-            color: #0077b5;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            margin-top: 3px;
-        }
+        .linkedin-link { text-decoration: none; font-size: 0.7rem; color: #0077b5; font-weight: bold; display: inline-flex; align-items: center; gap: 3px; margin-top: 3px; }
 
-        @media (max-width: 1100px) {
-            .grid-hide { display: none; }
-            .header h1 { font-size: 1.4rem; }
-        }
+        @media (max-width: 1100px) { .grid-hide { display: none; } .header h1 { font-size: 1.4rem; } }
     </style>
 </head>
 <body>
@@ -193,21 +137,16 @@
         if (error) return;
 
         data.sort((a, b) => {
-            let valA = a[currentSortColumn];
-            let valB = b[currentSortColumn];
-
+            let valA = a[currentSortColumn], valB = b[currentSortColumn];
             if (currentSortColumn === 'project_revenue') {
-                valA = parseFloat(valA) || 0; 
-                valB = parseFloat(valB) || 0;
-            } 
-            else if (currentSortColumn === 'next_contact') {
+                valA = parseFloat(valA) || 0; valB = parseFloat(valB) || 0;
+            } else if (currentSortColumn === 'next_contact') {
                 valA = valA ? new Date(valA).getTime() : Infinity;
                 valB = valB ? new Date(valB).getTime() : Infinity;
             } else {
                 valA = (valA || '').toString().toLowerCase();
                 valB = (valB || '').toString().toLowerCase();
             }
-
             if (valA < valB) return isAscending ? -1 : 1;
             if (valA > valB) return isAscending ? 1 : -1;
             return 0;
@@ -231,8 +170,7 @@
             }
 
             let tempClass = prob >= 90 ? 'rev-high' : (prob >= 50 ? 'rev-med' : 'rev-low');
-            let dateClass = '';
-            let alertText = '';
+            let dateClass = '', alertText = '';
             if (client.next_contact && isActive) {
                 const nextDate = new Date(client.next_contact).setHours(0,0,0,0);
                 if (nextDate <= today) {
@@ -242,16 +180,17 @@
             }
 
             let domain = "";
-            if (client.website_url) {
-                domain = client.website_url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0].split('?')[0].trim();
-            } else if (client.client_email && client.client_email.includes('@')) {
-                domain = client.client_email.split('@')[1];
-            }
+            if (client.website_url) domain = client.website_url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0].split('?')[0].trim();
+            else if (client.client_email && client.client_email.includes('@')) domain = client.client_email.split('@')[1];
             const logoUrl = domain ? `https://www.google.com/s2/favicons?sz=64&domain=${domain}` : 'https://via.placeholder.com/35?text=B20';
 
-            // LinkedIn Logic
-            const companyLinkedIn = client.company_linkedin ? `<a href="${client.company_linkedin}" target="_blank" class="linkedin-link">Company LI 🔗</a>` : '';
-            const contactLinkedIn = client.linkedin_url ? `<a href="${client.linkedin_url}" target="_blank" class="linkedin-link">Contact LI 🔗</a>` : '';
+            // --- LINKEDIN CALCULATION LOGIC ---
+            // If explicit link exists, use it. Otherwise, generate a LinkedIn search link based on Company Name.
+            const companyLIUrl = client.company_linkedin || `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}`;
+            const companyLinkedIn = `<a href="${companyLIUrl}" target="_blank" class="linkedin-link">Company LI 🔗</a>`;
+            
+            // Looking for "linkedin_profile" as requested
+            const contactLinkedIn = client.linkedin_profile ? `<a href="${client.linkedin_profile}" target="_blank" class="linkedin-link">Contact LI 🔗</a>` : '';
 
             body.innerHTML += `
                 <tr style="${isActive ? '' : 'opacity: 0.5; background: #f9f9f9;'}">
