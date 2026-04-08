@@ -44,9 +44,13 @@
                 <label>Company Name *</label>
                 <input type="text" id="company_name" placeholder="e.g. Global Foods Ltd" required>
             </div>
-            <div class="field full-width">
+            <div class="field">
                 <label>Company Website</label>
                 <input type="text" id="website_url" placeholder="e.g. beyond20.com">
+            </div>
+            <div class="field">
+                <label>Company LinkedIn URL</label>
+                <input type="url" id="company_linkedin" placeholder="https://linkedin.com/company/...">
             </div>
             <div class="field">
                 <label>Country</label>
@@ -67,10 +71,6 @@
                     <option value="Active">Active</option>
                     <option value="Former">Former</option>
                 </select>
-            </div>
-            <div class="field full-width">
-                <label>Office Address</label>
-                <textarea id="address" rows="2"></textarea>
             </div>
         </div>
 
@@ -93,13 +93,17 @@
                 <input type="text" id="mobile_number">
             </div>
             <div class="field full-width">
-                <label>LinkedIn Profile URL</label>
+                <label>Contact LinkedIn Profile URL</label>
                 <input type="url" id="linkedin_profile">
             </div>
         </div>
 
         <h3>Project & CRM Tracking</h3>
         <div class="grid">
+            <div class="field full-width">
+                <label>Google Drive Folder Link</label>
+                <input type="url" id="google_drive_link" placeholder="https://drive.google.com/..." style="background-color: #f0f7ff;">
+            </div>
             <div class="field">
                 <label>Contract Revenue</label> 
                 <input type="text" id="project_revenue">
@@ -120,10 +124,6 @@
                 <label>Referral Fee</label> 
                 <input type="text" id="referral_fee">
             </div>
-            <div class="field full-width">
-                <label>B20 members touched by client</label> 
-                <textarea id="b20_members_touched" rows="2"></textarea>
-            </div>
             <div class="field">
                 <label>Last Contacted</label>
                 <input type="date" id="last_contacted">
@@ -135,10 +135,6 @@
             <div class="field full-width">
                 <label>Project Details</label>
                 <textarea id="project_details" rows="2"></textarea>
-            </div>
-            <div class="field full-width">
-                <label>Social Commentary</label>
-                <textarea id="social_commentary" rows="2"></textarea>
             </div>
         </div>
 
@@ -188,27 +184,26 @@
 
         if (data) {
             document.getElementById('company_name').value = data.company_name || '';
-            document.getElementById('website_url').value = data.website_url || ''; // LOAD WEBSITE
+            document.getElementById('website_url').value = data.website_url || '';
+            document.getElementById('company_linkedin').value = data.company_linkedin || '';
             document.getElementById('country').value = data.country || '';
             document.getElementById('number_of_employees').value = data.number_of_employees || '';
             document.getElementById('estimated_revenue').value = data.estimated_revenue || '';
             document.getElementById('status').value = data.Status || 'Lead';
-            document.getElementById('address').value = data.address || '';
             document.getElementById('key_contact_name').value = data.key_contact_name || '';
             document.getElementById('position').value = data.position || '';
             document.getElementById('client_email').value = data.client_email || '';
             document.getElementById('mobile_number').value = data.mobile_number || '';
             document.getElementById('linkedin_profile').value = data.linkedin_profile || '';
+            document.getElementById('google_drive_link').value = data.google_drive_link || '';
             document.getElementById('project_revenue').value = data.project_revenue || '';
             document.getElementById('b20_fee').value = data.b20_fee || '';
             document.getElementById('referring_partner').value = data.referring_partner || '';
             document.getElementById('b20_consultant_partner').value = data.b20_consultant_partner || '';
             document.getElementById('referral_fee').value = data.referral_fee || '';
-            document.getElementById('b20_members_touched').value = data.b20_members_touched || '';
             document.getElementById('last_contacted').value = data.last_contacted || '';
             document.getElementById('next_contact').value = data.next_contact || '';
             document.getElementById('project_details').value = data.project_details || '';
-            document.getElementById('social_commentary').value = data.social_commentary || '';
             document.getElementById('probability').value = data.probability || '25';
         }
     }
@@ -227,28 +222,27 @@
 
         const clientData = {
             company_name: document.getElementById('company_name').value,
-            website_url: document.getElementById('website_url').value, // SAVE WEBSITE
+            website_url: document.getElementById('website_url').value,
+            company_linkedin: document.getElementById('company_linkedin').value,
             country: document.getElementById('country').value,
             number_of_employees: document.getElementById('number_of_employees').value || null,
             estimated_revenue: document.getElementById('estimated_revenue').value,
             Status: document.getElementById('status').value,
-            address: document.getElementById('address').value,
             key_contact_name: document.getElementById('key_contact_name').value,
             position: document.getElementById('position').value,
             client_email: document.getElementById('client_email').value,
             mobile_number: document.getElementById('mobile_number').value,
             linkedin_profile: document.getElementById('linkedin_profile').value,
+            google_drive_link: document.getElementById('google_drive_link').value,
             project_revenue: cleanPrice('project_revenue'), 
             project_details: document.getElementById('project_details').value,
             last_contacted: document.getElementById('last_contacted').value || null,
             next_contact: document.getElementById('next_contact').value || null,
-            social_commentary: document.getElementById('social_commentary').value,
             probability: document.getElementById('probability').value,
             b20_fee: document.getElementById('b20_fee').value,
             referring_partner: document.getElementById('referring_partner').value,
             b20_consultant_partner: document.getElementById('b20_consultant_partner').value,
-            referral_fee: document.getElementById('referral_fee').value,
-            b20_members_touched: document.getElementById('b20_members_touched').value
+            referral_fee: document.getElementById('referral_fee').value
         };
 
         let result = clientId ? 
