@@ -175,19 +175,34 @@
         let query = db.from('clients').select('*');
         
         if (searchTerm) {
-            // Updated to search the exact "b20_consultant_partner" column
             query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%,b20_consultant_partner.ilike.%${searchTerm}%`);
         }
 
         const { data, error } = await query;
         if (error) return;
 
+        // FIXED SORTING LOGIC
         data.sort((a, b) => {
-            let valA = a[currentSortColumn], valB = b[currentSortColumn];
+            let valA = a[currentSortColumn];
+            let valB = b[currentSortColumn];
+
             if (currentSortColumn === 'project_revenue') {
-                valA = parseFloat(valA) || 0; valB = parseFloat(valB) || 0;
+                valA = parseFloat(valA) || 0; 
+                valB = parseFloat(valB) || 0;
+            } 
+            else if (currentSortColumn === 'next_contact') {
+                // Convert to timestamp; treat TBD/Null as Infinity so they go to bottom
+                valA = valA ? new Date(valA).getTime() : Infinity;
+                valB = valB ? new Date(valB).getTime() : Infinity;
+            } else {
+                // General text sort
+                valA = (valA || '').toString().toLowerCase();
+                valB = (valB || '').toString().toLowerCase();
             }
-            return isAscending ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+
+            if (valA < valB) return isAscending ? -1 : 1;
+            if (valA > valB) return isAscending ? 1 : -1;
+            return 0;
         });
 
         body.innerHTML = '';
