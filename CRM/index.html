@@ -175,8 +175,8 @@
         let query = db.from('clients').select('*');
         
         if (searchTerm) {
-            // UPDATED: Now searches the "referring_partner" column as well
-            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%searchTerm%,position.ilike.%${searchTerm}%,referring_partner.ilike.%${searchTerm}%`);
+            // Updated to search the "b20_consulting_partner" column
+            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%,b20_consulting_partner.ilike.%${searchTerm}%`);
         }
 
         const { data, error } = await query;
@@ -242,7 +242,7 @@
                         <small style="color: #666;">${client.position || ''}</small>
                     </td>
                     <td class="grid-hide">${client.project_details || '—'}</td>
-                    <td class="grid-hide"><strong>${client.referring_partner || '—'}</strong></td> 
+                    <td class="grid-hide"><strong>${client.b20_consulting_partner || '—'}</strong></td> 
                     <td><span class="${tempClass}">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
                     <td class="${dateClass}">${client.next_contact || 'TBD'}${alertText}</td>
                     <td>
