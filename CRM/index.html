@@ -190,9 +190,10 @@
             const contactLinkedIn = client.linkedin_profile ? `<a href="${client.linkedin_profile}" target="_blank" class="linkedin-link">Contact LI 🔗</a>` : '';
 
             // --- GOOGLE DRIVE LOGIC ---
-            // Only show the button if a link actually exists in the database
-            const driveBtn = client.google_drive_link 
-                ? `<a href="${client.google_drive_link}" target="_blank" class="btn-action btn-drive">Google Drive</a>` 
+            // Checking both potential cases for the column name
+            const driveLink = client.google_drive_link || client.Google_Drive_Link;
+            const driveBtn = driveLink 
+                ? `<a href="${driveLink}" target="_blank" class="btn-action btn-drive">Google Drive</a>` 
                 : '';
 
             body.innerHTML += `
