@@ -42,6 +42,7 @@
 
         .btn-action { display: block; width: 130px; border: none; padding: 9px 0; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: bold; margin-bottom: 6px; text-align: center; text-decoration: none; white-space: nowrap; box-sizing: border-box; }
         .btn-update { background: #007bff; color: white; }
+        .btn-drive { background: #ffc107; color: #212529; } /* Gold/Yellow for Google Drive */
         .btn-delete { background: #f8f9fa; color: #dc3545; border: 1px solid #dc3545; }
         .btn-to-inactive { background: #6c757d; color: white; }
         .btn-to-active { background: #28a745; color: white; }
@@ -184,13 +185,15 @@
             else if (client.client_email && client.client_email.includes('@')) domain = client.client_email.split('@')[1];
             const logoUrl = domain ? `https://www.google.com/s2/favicons?sz=64&domain=${domain}` : 'https://via.placeholder.com/35?text=B20';
 
-            // --- LINKEDIN CALCULATION LOGIC ---
-            // If explicit link exists, use it. Otherwise, generate a LinkedIn search link based on Company Name.
             const companyLIUrl = client.company_linkedin || `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}`;
             const companyLinkedIn = `<a href="${companyLIUrl}" target="_blank" class="linkedin-link">Company LI 🔗</a>`;
-            
-            // Looking for "linkedin_profile" as requested
             const contactLinkedIn = client.linkedin_profile ? `<a href="${client.linkedin_profile}" target="_blank" class="linkedin-link">Contact LI 🔗</a>` : '';
+
+            // --- GOOGLE DRIVE LOGIC ---
+            // Only show the button if a link actually exists in the database
+            const driveBtn = client.google_drive_link 
+                ? `<a href="${client.google_drive_link}" target="_blank" class="btn-action btn-drive">Google Drive</a>` 
+                : '';
 
             body.innerHTML += `
                 <tr style="${isActive ? '' : 'opacity: 0.5; background: #f9f9f9;'}">
@@ -215,6 +218,7 @@
                     <td class="${dateClass}">${client.next_contact || 'TBD'}${alertText}</td>
                     <td>
                         <a href="add-client.html?id=${client.id}" class="btn-action btn-update">Update</a>
+                        ${driveBtn}
                         <button class="btn-action ${isActive ? 'btn-to-inactive' : 'btn-to-active'}" onclick="toggleStatus('${client.id}', '${statusValue}')">
                             ${isActive ? 'Deactivate' : 'Activate'}
                         </button>
