@@ -20,7 +20,6 @@
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
         
-        /* UPDATED SEARCH BAR SIZE */
         .search-bar { 
             width: 400px; 
             max-width: 100%;
@@ -45,7 +44,6 @@
         .date-alert { color: #d9534f; font-weight: bold; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
         
-        /* UNIFORM NAV BUTTONS */
         .nav-actions { display: flex; align-items: center; gap: 10px; }
         .btn-nav { 
             width: 130px; 
@@ -63,7 +61,6 @@
         .btn-add-nav { background: #28a745; color: white; border: none; }
         .btn-logout-nav { background: transparent; border: 1px solid #d9534f; color: #d9534f; }
 
-        /* ACTION BUTTONS IN TABLE */
         .btn-action { 
             display: block; 
             width: 130px; 
@@ -89,7 +86,16 @@
         .status-inactive { background: #e2e3e5; color: #383d41; }
         
         .linkedin-link { color: #0077b5; text-decoration: none; font-size: 0.75rem; font-weight: bold; display: block; margin-top: 5px; }
-        .company-research { font-size: 0.65rem; color: #6c757d; text-decoration: none; margin-top: 4px; display: inline-block; }
+        
+        /* UPDATED COMPANY RESEARCH LINK STYLE */
+        .company-research { 
+            font-size: 0.6rem; /* Slightly smaller to fit */
+            color: #6c757d; 
+            text-decoration: none; 
+            margin-top: 4px; 
+            display: inline-block; 
+            white-space: nowrap; /* Keep on one line */
+        }
 
         @media (max-width: 900px) {
             .grid-hide { display: none; }
@@ -229,7 +235,7 @@
                             <div>
                                 <strong>${client.company_name}</strong>
                                 <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span><br>
-                                <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}" target="_blank" class="company-research">Research Company ↗</a>
+                                <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}" target="_blank" class="company-research">Company LinkedIn Profile ↗</a>
                             </div>
                         </div>
                     </td>
