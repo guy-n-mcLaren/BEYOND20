@@ -93,21 +93,9 @@
         }
         .status-active { background: #d4edda; color: #155724; }
         .status-inactive { background: #e2e3e5; color: #383d41; }
-        
-        .linkedin-link { color: #0077b5; text-decoration: none; font-size: 0.75rem; font-weight: bold; display: block; margin-top: 5px; }
-        
-        .company-research { 
-            font-size: 0.7rem;
-            color: #0077b5; 
-            text-decoration: none; 
-            font-weight: bold;
-            display: block;
-            margin-top: 3px;
-        }
 
         @media (max-width: 1100px) {
             .grid-hide { display: none; }
-            .search-bar { width: 100%; }
             .header h1 { font-size: 1.4rem; }
         }
     </style>
@@ -137,7 +125,7 @@
         <button class="btn-add-nav" style="width: auto; padding: 0 15px; height: 35px; background:#007bff; font-size: 0.8rem; border:none; border-radius: 4px; color: white; cursor:pointer;" onclick="handleSort('project_revenue')">Sort by Revenue</button>
     </div>
 
-    <input type="text" id="search" class="search-bar" placeholder="Search Company, Contact, or Position..." onkeyup="fetchClients()">
+    <input type="text" id="search" class="search-bar" placeholder="Search Company, Contact, or Consultant..." onkeyup="fetchClients()">
 
     <table>
         <thead>
@@ -145,7 +133,8 @@
                 <th>Company</th>
                 <th>Key Contact</th>
                 <th class="grid-hide">Project Focus</th>
-                <th class="grid-hide">B20 Consultant</th> <th>Deal Value</th>
+                <th class="grid-hide">B20 Consultant</th> 
+                <th>Deal Value</th>
                 <th>Next Follow-up</th>
                 <th style="width: 140px;">Actions</th>
             </tr>
@@ -186,7 +175,8 @@
         let query = db.from('clients').select('*');
         
         if (searchTerm) {
-            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%${searchTerm}%,position.ilike.%${searchTerm}%`);
+            // UPDATED: Now searches the "referring_partner" column as well
+            query = query.or(`company_name.ilike.%${searchTerm}%,key_contact_name.ilike.%searchTerm%,position.ilike.%${searchTerm}%,referring_partner.ilike.%${searchTerm}%`);
         }
 
         const { data, error } = await query;
@@ -243,19 +233,17 @@
                             <img src="${logoUrl}" style="width: 35px; height: 35px; border-radius: 6px; object-fit: contain; background: white; border: 1px solid #eee;" onerror="this.src='https://via.placeholder.com/35?text=B20'">
                             <div>
                                 <strong>${client.company_name}</strong><br>
-                                <a href="https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(client.company_name)}" target="_blank" class="company-research">Company LinkedIn Profile ↗</a>
                                 <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${statusValue}</span>
                             </div>
                         </div>
                     </td>
                     <td>
                         <strong>${client.key_contact_name || '—'}</strong><br>
-                        <small style="color: #666;">${client.position || ''}</small><br>
-                        <a href="mailto:${client.client_email}" style="color: #007bff; text-decoration:none; font-size:0.75rem;">${client.client_email || ''}</a>
-                        ${client.linkedin_profile ? `<a href="${client.linkedin_profile}" target="_blank" class="linkedin-link">LinkedIn Profile ↗</a>` : ''}
+                        <small style="color: #666;">${client.position || ''}</small>
                     </td>
                     <td class="grid-hide">${client.project_details || '—'}</td>
-                    <td class="grid-hide"><strong>${client.b20_consultant || '—'}</strong></td> <td><span class="${tempClass}">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
+                    <td class="grid-hide"><strong>${client.referring_partner || '—'}</strong></td> 
+                    <td><span class="${tempClass}">${formatter.format(rev)}</span><br><small>${prob}% Prob</small></td>
                     <td class="${dateClass}">${client.next_contact || 'TBD'}${alertText}</td>
                     <td>
                         <a href="add-client.html?id=${client.id}" class="btn-action btn-update">Update</a>
