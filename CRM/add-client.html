@@ -44,13 +44,9 @@
                 <label>Company Name *</label>
                 <input type="text" id="company_name" placeholder="e.g. Global Foods Ltd" required>
             </div>
-            <div class="field">
+            <div class="field full-width">
                 <label>Company Website</label>
                 <input type="text" id="website_url" placeholder="e.g. beyond20.com">
-            </div>
-            <div class="field">
-                <label>Company LinkedIn URL</label>
-                <input type="url" id="company_linkedin" placeholder="https://linkedin.com/company/...">
             </div>
             <div class="field">
                 <label>Country</label>
@@ -185,7 +181,6 @@
         if (data) {
             document.getElementById('company_name').value = data.company_name || '';
             document.getElementById('website_url').value = data.website_url || '';
-            document.getElementById('company_linkedin').value = data.company_linkedin || '';
             document.getElementById('country').value = data.country || '';
             document.getElementById('number_of_employees').value = data.number_of_employees || '';
             document.getElementById('estimated_revenue').value = data.estimated_revenue || '';
@@ -223,7 +218,6 @@
         const clientData = {
             company_name: document.getElementById('company_name').value,
             website_url: document.getElementById('website_url').value,
-            company_linkedin: document.getElementById('company_linkedin').value,
             country: document.getElementById('country').value,
             number_of_employees: document.getElementById('number_of_employees').value || null,
             estimated_revenue: document.getElementById('estimated_revenue').value,
