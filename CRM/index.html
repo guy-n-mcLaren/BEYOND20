@@ -37,7 +37,6 @@
         .btn-add { background: #28a745; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
         .btn-logout { background: none; border: 1px solid #d9534f; color: #d9534f; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-        /* UNIFORM BUTTON WIDTHS */
         .btn-action { 
             display: block; 
             width: 130px; 
@@ -186,12 +185,18 @@
                 }
             }
 
+            // --- IMPROVED DOMAIN EXTRACTION ---
             let domain = "";
             if (client.website_url) {
-                domain = client.website_url.replace('https://', '').replace('http://', '').split('/')[0];
+                domain = client.website_url
+                    .replace(/^(?:https?:\/\/)?(?:www\.)?/i, "") // Removes http://, https://, and www.
+                    .split('/')[0]                             // Removes anything after the domain
+                    .split('?')[0]                             // Removes query parameters
+                    .trim();
             } else if (client.client_email && client.client_email.includes('@')) {
                 domain = client.client_email.split('@')[1];
             }
+            
             const logoUrl = domain ? `https://logo.clearbit.com/${domain}` : 'https://via.placeholder.com/35?text=B20';
 
             body.innerHTML += `
