@@ -20,18 +20,24 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 1600px; }
         th { background: #f1f5f9; text-align: left; padding: 12px; font-size: 14px; }
         td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        
+        /* NEW: Styles for the Toggle and Action buttons */
+        .btn-group { display: flex; gap: 8px; }
+        .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .delete-btn:hover { background: #fecaca; }
+        
+        .toggle-btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; min-width: 90px; }
+        .toggle-active { background: #dcfce7; color: #166534; }
+        .toggle-inactive { background: #f1f5f9; color: #475569; }
+        
         .export-btn { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
         
-        /* Width adjustment for Key Assignments */
         th:nth-child(8), td:nth-child(8) {
             min-width: 450px;
             white-space: normal;
             line-height: 1.5;
             vertical-align: top;
         }
-        /* Sticky Name Column */
         th:nth-child(1), td:nth-child(1) {
             position: sticky;
             left: 0;
@@ -105,26 +111,20 @@
 
     let allPartners = [];
 
-    // --- 1. THE GATEKEEPER (Option 1) ---
     async function checkAccess() {
         const { data: { session } } = await _supabase.auth.getSession();
-        
         if (!session) {
-            // No session? Go to login.
             window.location.href = 'login.html';
         } else {
-            // Session exists? Safe to load data.
             loadPartners();
         }
     }
 
-    // --- 2. LOGOUT FUNCTION ---
     async function handleLogout() {
         await _supabase.auth.signOut();
         window.location.href = 'login.html';
     }
 
-    // --- 3. LOAD DATA ---
     async function loadPartners() {
         const { data, error } = await _supabase
             .from('consulting_partners')
@@ -146,6 +146,11 @@
         const tableBody = document.getElementById('partnerTableBody');
         tableBody.innerHTML = '';
         partners.forEach(p => {
+            // NEW: Determine button text and class based on status
+            const isActive = p.status === 1 || p.status === null; 
+            const btnText = isActive ? 'Deactivate' : 'Activate';
+            const btnClass = isActive ? 'toggle-active' : 'toggle-inactive';
+
             const row = `
                 <tr>
                     <td><strong>${p.first_name} ${p.surname}</strong></td>
@@ -166,10 +171,31 @@
                             ${p.availability_status || '-'}
                         </span>
                     </td>
-                    <td><button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="toggle-btn ${btnClass}" onclick="toggleStatus('${p.id}', ${p.status})">${btnText}</button>
+                            <button class="delete-btn" onclick="deletePartner('${p.id}')">Delete</button>
+                        </div>
+                    </td>
                 </tr>`;
             tableBody.innerHTML += row;
         });
+    }
+
+    // NEW: Function to handle the Supabase update
+    async function toggleStatus(id, currentStatus) {
+        const newStatus = (currentStatus === 1 || currentStatus === null) ? 0 : 1;
+        
+        const { error } = await _supabase
+            .from('consulting_partners')
+            .update({ status: newStatus })
+            .eq('id', id);
+
+        if (error) {
+            alert("Update failed: " + error.message);
+        } else {
+            loadPartners(); // Refresh list to show changes
+        }
     }
 
     async function deletePartner(id) {
@@ -198,8 +224,8 @@
 
     function exportToCSV() {
         if (allPartners.length === 0) return;
-        const headers = ["First Name", "Surname", "Email", "Phone", "Location", "Specialty", "Assignments"];
-        const rows = allPartners.map(p => [p.first_name, p.surname, p.email, p.phone_number, p.location, p.specialty_1, `"${p.previous_assignments}"`].join(","));
+        const headers = ["First Name", "Surname", "Email", "Phone", "Location", "Specialty", "Assignments", "Status"];
+        const rows = allPartners.map(p => [p.first_name, p.surname, p.email, p.phone_number, p.location, p.specialty_1, `"${p.previous_assignments}"`, p.status === 0 ? "Inactive" : "Active"].join(","));
         const csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.join("\n");
         const link = document.createElement("a");
         link.setAttribute("href", encodeURI(csvContent));
@@ -209,7 +235,6 @@
         document.body.removeChild(link);
     }
 
-    // Start Check
     window.addEventListener('DOMContentLoaded', checkAccess);
 </script>
 </body>
