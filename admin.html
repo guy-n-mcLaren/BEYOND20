@@ -21,7 +21,6 @@
         th { background: #f1f5f9; text-align: left; padding: 12px; font-size: 14px; }
         td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
         
-        /* NEW: Styles for the Toggle and Action buttons */
         .btn-group { display: flex; gap: 8px; }
         .delete-btn { background: #fee2e2; color: #ef4444; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .delete-btn:hover { background: #fecaca; }
@@ -29,23 +28,14 @@
         .toggle-btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; min-width: 90px; }
         .toggle-active { background: #dcfce7; color: #166534; }
         .toggle-inactive { background: #f1f5f9; color: #475569; }
+
+        /* NEW: Styling for inactive rows */
+        .inactive-row { opacity: 0.5; background-color: #f1f5f9; filter: grayscale(0.5); }
         
         .export-btn { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
         
-        th:nth-child(8), td:nth-child(8) {
-            min-width: 450px;
-            white-space: normal;
-            line-height: 1.5;
-            vertical-align: top;
-        }
-        th:nth-child(1), td:nth-child(1) {
-            position: sticky;
-            left: 0;
-            background: white;
-            z-index: 2;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-            white-space: nowrap;
-        }
+        th:nth-child(8), td:nth-child(8) { min-width: 450px; white-space: normal; line-height: 1.5; vertical-align: top; }
+        th:nth-child(1), td:nth-child(1) { position: sticky; left: 0; background: white; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.05); white-space: nowrap; }
         th:nth-child(1) { background: #f1f5f9; z-index: 3; }
         td:nth-child(2) { white-space: nowrap; }
     </style>
@@ -66,7 +56,7 @@
 
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-label">Total Bench</div>
+            <div class="stat-label">Active Bench</div>
             <div id="totalCounter" class="stat-number">0</div>
         </div>
         <div class="stat-card">
@@ -113,11 +103,7 @@
 
     async function checkAccess() {
         const { data: { session } } = await _supabase.auth.getSession();
-        if (!session) {
-            window.location.href = 'login.html';
-        } else {
-            loadPartners();
-        }
+        if (!session) { window.location.href = 'login.html'; } else { loadPartners(); }
     }
 
     async function handleLogout() {
@@ -146,13 +132,13 @@
         const tableBody = document.getElementById('partnerTableBody');
         tableBody.innerHTML = '';
         partners.forEach(p => {
-            // NEW: Determine button text and class based on status
             const isActive = p.status === 1 || p.status === null; 
             const btnText = isActive ? 'Deactivate' : 'Activate';
             const btnClass = isActive ? 'toggle-active' : 'toggle-inactive';
+            const rowClass = isActive ? '' : 'inactive-row'; // NEW: Add recessive class
 
             const row = `
-                <tr>
+                <tr class="${rowClass}">
                     <td><strong>${p.first_name} ${p.surname}</strong></td>
                     <td>
                         <div style="line-height: 1.6;">
@@ -182,20 +168,11 @@
         });
     }
 
-    // NEW: Function to handle the Supabase update
     async function toggleStatus(id, currentStatus) {
         const newStatus = (currentStatus === 1 || currentStatus === null) ? 0 : 1;
-        
-        const { error } = await _supabase
-            .from('consulting_partners')
-            .update({ status: newStatus })
-            .eq('id', id);
-
-        if (error) {
-            alert("Update failed: " + error.message);
-        } else {
-            loadPartners(); // Refresh list to show changes
-        }
+        const { error } = await _supabase.from('consulting_partners').update({ status: newStatus }).eq('id', id);
+        if (error) alert("Update failed: " + error.message);
+        else loadPartners();
     }
 
     async function deletePartner(id) {
@@ -215,10 +192,15 @@
         displayPartners(filtered);
     }
 
+    // UPDATED: Now only counts active consultants (status 1 or null)
     function updateStats(partners) {
-        document.getElementById('totalCounter').innerText = partners.length;
-        const avail = partners.filter(p => p.availability_status?.toLowerCase().includes('avail')).length;
+        const activeOnly = partners.filter(p => p.status === 1 || p.status === null);
+        
+        document.getElementById('totalCounter').innerText = activeOnly.length;
+        
+        const avail = activeOnly.filter(p => p.availability_status?.toLowerCase().includes('avail')).length;
         document.getElementById('availableCounter').innerText = avail;
+        
         document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString();
     }
 
