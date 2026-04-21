@@ -29,7 +29,6 @@
         .toggle-active { background: #dcfce7; color: #166534; }
         .toggle-inactive { background: #f1f5f9; color: #475569; }
 
-        /* NEW: Styling for inactive rows */
         .inactive-row { opacity: 0.5; background-color: #f1f5f9; filter: grayscale(0.5); }
         
         .export-btn { background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
@@ -135,14 +134,18 @@
             const isActive = p.status === 1 || p.status === null; 
             const btnText = isActive ? 'Deactivate' : 'Activate';
             const btnClass = isActive ? 'toggle-active' : 'toggle-inactive';
-            const rowClass = isActive ? '' : 'inactive-row'; // NEW: Add recessive class
+            const rowClass = isActive ? '' : 'inactive-row'; 
 
             const row = `
                 <tr class="${rowClass}">
                     <td><strong>${p.first_name} ${p.surname}</strong></td>
                     <td>
                         <div style="line-height: 1.6;">
-                            <a href="mailto:${p.email}" style="color: #3b82f6; text-decoration: none; display: block; font-size: 13px;">✉️ ${p.email || '-'}</a>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${p.email}" 
+                               target="_blank" 
+                               style="color: #3b82f6; text-decoration: none; display: block; font-size: 13px;">
+                               ✉️ ${p.email || '-'}
+                            </a>
                             <a href="tel:${p.phone_number}" style="color: #64748b; text-decoration: none; display: block; font-size: 13px;">📞 ${p.phone_number || '-'}</a>
                         </div>
                     </td>
@@ -192,15 +195,11 @@
         displayPartners(filtered);
     }
 
-    // UPDATED: Now only counts active consultants (status 1 or null)
     function updateStats(partners) {
         const activeOnly = partners.filter(p => p.status === 1 || p.status === null);
-        
         document.getElementById('totalCounter').innerText = activeOnly.length;
-        
         const avail = activeOnly.filter(p => p.availability_status?.toLowerCase().includes('avail')).length;
         document.getElementById('availableCounter').innerText = avail;
-        
         document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString();
     }
 
